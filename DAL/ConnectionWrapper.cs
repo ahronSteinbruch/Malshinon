@@ -21,7 +21,7 @@ namespace Malshinon.DAL
             return Instance;
         }
 
-        public MySqlDataReader? ExecuteSelect(string query, Dictionary<string, Object> parameters = null)
+        public MySqlDataReader? ExecuteSelect(string query, Dictionary<string, object> parameters = null)
         {
             MySqlConnection conn = null;
             try
@@ -51,7 +51,7 @@ namespace Malshinon.DAL
             }
         }
 
-        public void ExecuteNoneQuery(string query, Dictionary<string, Object> parameters = null)
+        public void ExecuteNoneQuery(string query, Dictionary<string, object> parameters = null)
         {
             MySqlConnection connection = null;
             MySqlCommand cmd = null;
@@ -83,7 +83,7 @@ namespace Malshinon.DAL
             }
         }
 
-        public object? ExecuteScalar(string query, Dictionary<string, Object> parameters = null)
+        public object? ExecuteScalar(string query, Dictionary<string, object> parameters = null)
         {
             MySqlConnection conn = null;
             try

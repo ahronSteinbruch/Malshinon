@@ -12,7 +12,7 @@ namespace Malshinon.DAL
     {
         private static readonly ConnectionWrapper _connection = ConnectionWrapper.getInstance();
 
-        public static int idGenerator = ReporterRepository.getHighestId() + 1;
+        public static int idGenerator = getHighestId() + 1;
 
         public static Reporter? GetById(int id)
         {
@@ -57,6 +57,25 @@ namespace Malshinon.DAL
         public static List<Reporter> GetAll()
         {
             const string query = "SELECT * FROM Reporters";
+            var result = new List<Reporter>();
+            using var reader = _connection.ExecuteSelect(query);
+            while (reader != null && reader.Read())
+            {
+                result.Add(new Reporter
+                {
+                    Id = Convert.ToInt32(reader["Id"]),
+                    Name = reader["Name"].ToString(),
+                    SecretCode = reader["SecretCode"].ToString(),
+                    Rating = Convert.ToDouble(reader["Rating"]),
+                    IsRecruit = Convert.ToBoolean(reader["IsRecruit"])
+                });
+            }
+            return result;
+        }
+        public static List<Reporter> GetAllPotentialInformants()
+        {
+            const string query = "SELECT * FROM Reporters" +
+                "WHERE IsRecruit";
             var result = new List<Reporter>();
             using var reader = _connection.ExecuteSelect(query);
             while (reader != null && reader.Read())

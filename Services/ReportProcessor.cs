@@ -1,45 +1,67 @@
-﻿using Malshinon.DAL;
-using Malshinon.models;
+﻿// ReportProcessor.cs
+using Malshinon.DAL;
+using Malshinon.Services;
 
 
-namespace Malshinon.Services
+
+namespace Malshinon.models.Services
 {
     public static class ReportProcessor
     {
-        
-        private static readonly TagAnalyzer _tagAnalyzer;
+        public static void ProcessNewReport(int reporterId, string message, List<string> targetCodesOrNames)
+        {
+            var tagRepo = new TagsRepository();
+            var allTags = tagRepo.GetConnectedTagNamesRecursive("", 2) // Load all if needed
+                .Select(t => new Tag { Name = t }).ToList();
+            var tagAnalyzer = new TagAnalyzer(allTags);
+            var alertGenerator = new AlertGenerator();
+            var alertRepo = new AlertRepository();
 
-        private static readonly int reporter_id;
+            // Get or create targets
+            List<int> targets = new();
+            foreach (var targetName in targetCodesOrNames)
+            {
+                targets.Add(PersonRegistry.GetOrCreateTarget(targetName));
+            }
+          
 
-        private static readonly AlertGenerator _alertGenerator;
+            // Analyze primary tag
+            var primaryTag = tagAnalyzer.AnalyzeTextAndFindPrimaryTag(message);
 
+            var report = new Report
+            {
+                ReporterId = reporterId,
+                Message = message,
+                Timestamp = DateTime.Now,
+                Tag = primaryTag?.Name ?? "Uncategorized"
+            };
 
+            // Save report
+            ReportRepository.AddReport(report);
 
-        public static 
+            // Get last inserted report id (assuming auto increment)
+            int reportId = PersonRegistry.ReporteridGenerator;
 
+            foreach (int targetId in targets)
+            {
 
-            // 2. איתור/יצירת מטרות
-            var targets = targetCodesOrNames
-                .Select(PersonRegistry.GetOrCreateTarget)
-                .ToList();
+                string query = "INSERT INTO ReportTargets (ReportId, TargetId) VALUES (@rid, @tid);";
+                var parameters = new Dictionary<string, object>
+                {
+                    {"@rid", reportId },
+                    {"@tid", targetId }
+                };
+                ConnectionWrapper.getInstance().ExecuteNoneQuery(query, parameters);
 
-            // 3. ניתוח תגית ראשית
-            var primaryTag = _tagAnalyzer.AnalyzeTextAndFindPrimaryTag(text);
-
-            // 4. יצירת הדוח
-  
-
-            // 5. קישור מטרות לדוח
-           
-
-            // 6. עידכון סטטוס גיוס
-
-
-            // 7. בדיקת התרעה (נבדוק רק עבור כל מטרה בנפרד — נחזיר רק אחת)
-           
-            // 8. אין התרעה
-
+                // Fetch all reports for this target
+                var allReports = ReportRepository.GetReportsByTargetId(targetId);
+                var alert = alertGenerator.GenerateAlertForTarget(targetId, allReports);
+                if (alert != null)
+                {
+                    alertRepo.AddAlert(alert);
+                    Console.WriteLine("ALERT! " + alert.Reason);
+                }
+            }
         }
     }
 }
-

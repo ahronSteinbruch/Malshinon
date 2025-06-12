@@ -1,11 +1,14 @@
-﻿using Malshinon.models;
+﻿using Malshinon.DAL;
+using Malshinon.models;
 
 namespace Malshinon.Services
 {
     public class AlertGenerator
     {
-        public Alert? GenerateAlertForTarget(Target target, List<Report> allReportsOnTarget)
+
+        public Alert? GenerateAlertForTarget(int targetId, List<Report> allReportsOnTarget)
         {
+            Target? target = TargetRepository.GetById(targetId);
             DateTime now = DateTime.Now;
 
             // תנאי 1: 20 דוחות או יותר

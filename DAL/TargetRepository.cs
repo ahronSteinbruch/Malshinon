@@ -1,16 +1,14 @@
-﻿using Malshinon.Helpers;
-using Malshinon.models;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 
 namespace Malshinon.DAL
 {
-    internal class TargetRepository
+    internal static class TargetRepository
     {
-        private readonly ConnectionWrapper _connection = ConnectionWrapper.getInstance();
+        private static readonly ConnectionWrapper _connection = ConnectionWrapper.getInstance();
 
-        public Target? GetById(int id)
+        public static Target? GetById(int id)
         {
             const string query = "SELECT * FROM Targets WHERE Id = @id";
             var parameters = new Dictionary<string, object> { { "@id", id } };
@@ -28,8 +26,24 @@ namespace Malshinon.DAL
             }
             return null;
         }
+        // Insert target and return its ID
+        public static int InsertAndReturnId(Target target)
+        {
+            const string query = @"INSERT INTO Targets (Name, SecretCode, Affiliation)
+                                 VALUES (@name, @code, @affiliation);
+                                 SELECT LAST_INSERT_ID();";
 
-        public Target? GetByName(string name)
+            var parameters = new Dictionary<string, object>
+            {
+                {"@name", target.Name},
+                {"@code", target.SecretCode},
+                {"@affiliation", target.Affiliation ?? string.Empty}
+            };
+
+            object? result = _connection.ExecuteScalar(query, parameters);
+            return result != null ? Convert.ToInt32(result) : -1;
+        }
+        public static Target? GetByName(string name)
         {
             const string query = "SELECT * FROM Targets WHERE Name = @name";
             var parameters = new Dictionary<string, object> { { "@name", name } };
@@ -48,7 +62,7 @@ namespace Malshinon.DAL
             return null;
         }
 
-        public Target? GetBySecretCode(string secretCode)
+        public static Target? GetBySecretCode(string secretCode)
         {
             const string query = "SELECT * FROM Targets WHERE SecretCode = @code";
             var parameters = new Dictionary<string, object> { { "@code", secretCode } };
@@ -66,8 +80,33 @@ namespace Malshinon.DAL
             }
             return null;
         }
+        public static int getHighestId()
+        {
+            const string query = "SELECT MAX(id) FROM Targets";
+            using (var reader = _connection.ExecuteSelect(query))
+            {
+                if (reader != null && reader.Read())
+                {
+                    return Convert.ToInt32(reader[0]);
+                }
+            }
+            return 0;
+        }
 
-        public List<Target> GetAll()
+        public static int GetIdByNameOrBySecretCode(string name)
+        {
+            const string query = "SELECT * FROM Tatgets WHERE Name = @name Or SecretCode = @name";
+            var parameters = new Dictionary<string, object> { { "@name", name } };
+            using var reader = _connection.ExecuteSelect(query, parameters);
+
+            if (reader != null && reader.Read())
+                return Convert.ToInt32(reader["Id"]);
+
+            return -1;
+        }
+
+
+        public static List<Target> GetAll()
         {
             const string query = "SELECT * FROM Targets";
             var result = new List<Target>();
@@ -85,7 +124,7 @@ namespace Malshinon.DAL
             return result;
         }
 
-        public int GetIdByName(string name)
+        public static int GetIdByName(string name)
         {
             const string query = "SELECT Id FROM Targets WHERE Name = @name";
             var parameters = new Dictionary<string, object> { { "@name", name } };
@@ -94,7 +133,7 @@ namespace Malshinon.DAL
             return -1;
         }
 
-        public int GetIdBySecretCode(string code)
+        public static int GetIdBySecretCode(string code)
         {
             const string query = "SELECT Id FROM Targets WHERE SecretCode = @code";
             var parameters = new Dictionary<string, object> { { "@code", code } };

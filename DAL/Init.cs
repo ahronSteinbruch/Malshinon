@@ -1,21 +1,16 @@
 ﻿using Google.Protobuf.Collections;
 using Malshinon.Helpers;
-using Malshinon.models;
 using Malshinon.Services;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Relational;
 using System;
 using System.Collections.Generic;
 
-namespace Malshinon.DAL.DB
+namespace Malshinon.DAL
 {
     public class Init
     {
         public static MySqlConnection Connection { get; private set; }
-        private readonly string ConnectionStr = "server=localhost;" +
-           "user=root;" +
-           "database=malshinon;" +
-           "port=3306;";
         public static void Initialise(string connectionString)
         {
             try

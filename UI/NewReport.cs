@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Malshinon.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Malshinon.UI
             Console.WriteLine("enter your code name");
             string CodeOrName = Console.ReadLine();
 
-            int reporterId = Services.PersonRegistry.GetOrCreateReporter(CodeOrName);
+            int reporterId = PersonRegistry.GetOrCreateReporter(CodeOrName);
 
             Console.WriteLine("Enter message about target");
             string newMessage = Console.ReadLine();
@@ -24,7 +25,7 @@ namespace Malshinon.UI
             string names = Console.ReadLine();
 
             foreach(string name in names.Split(" "){
-                targetsID.Add(Services.PersonRegistry.GetOrCreateTarget(name));
+                targetsID.Add(PersonRegistry.GetOrCreateTarget(name));
             }
 
 

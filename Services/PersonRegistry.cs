@@ -1,5 +1,4 @@
 ﻿using Malshinon.DAL;
-using Malshinon.models;
 using Malshinon.UI;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,8 @@ namespace Malshinon.Services
     public static class PersonRegistry
     {
 
-        public static int idGenerator = ReporterRepository.getHighestId();
+        public static int ReporteridGenerator = ReporterRepository.getHighestId();
+        public static int TargetidGenerator = TargetRepository.getHighestId();
         // -- מודיע
         public static int GetOrCreateReporter(string nameOrCode)
         {
@@ -19,7 +19,7 @@ namespace Malshinon.Services
                 return res.Id;
             Reporter newReporter = new Reporter
             {
-                Id = ++idGenerator,
+                Id = ++ReporteridGenerator,
                 Name = nameOrCode,
             };
             ReporterRepository.AddReporter(newReporter);
@@ -28,12 +28,18 @@ namespace Malshinon.Services
         }
 
         // -- מטרה
-        public static Target GetOrCreateTarget(string nameOrCode)
+        public static int GetOrCreateTarget(string nameOrCode)
         {
-          
-            var res = TargetRepository.
 
-            return target;
+            int res = TargetRepository.GetIdByNameOrBySecretCode(nameOrCode);
+            if (res != -1)
+                return res;
+            Target newTarget = new Target
+            {
+                Id = ++TargetidGenerator,
+                Name = nameOrCode,
+            };
+            return TargetRepository.InsertAndReturnId(newTarget);
         }
     }
 }

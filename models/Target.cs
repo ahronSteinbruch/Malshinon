@@ -1,4 +1,5 @@
-﻿using Malshinon.models;
+﻿using Malshinon.DAL;
+using Malshinon.models;
 
 public class Target
 {
@@ -7,7 +8,6 @@ public class Target
     public string SecretCode { get; set; }
     public string? Affiliation { get; set; }
 
-    public List<ReportTarget> ReportTargets { get; set; } = new();
 
     public Target() { }
 
@@ -23,15 +23,15 @@ public class Target
         return Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
     }
 
-    public bool IsDangerous()
+    public static bool IsDangerous(int id)
     {
-        return ReportTargets.Count >= 20;
+        return ReportRepository.GetReportCountByTargetId(id) >= 20;
     }
 
-    public bool HasBurstActivity()
+    public static bool HasBurstActivity(int id)
     {
-        var timestamps = ReportTargets
-            .Select(rt => rt.Report.Timestamp)
+        var timestamps = ReportRepository.GetReportsByTargetId(id)
+            .Select(rt => rt.Timestamp)
             .OrderBy(t => t)
             .ToList();
 

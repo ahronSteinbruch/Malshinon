@@ -1,24 +1,23 @@
 ﻿using Malshinon.Helpers;
-using Malshinon.models;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 
 namespace Malshinon.DAL
 {
-    internal class ReportRepository
+    internal static class ReportRepository
     {
-        private readonly ConnectionWrapper _connection = ConnectionWrapper.getInstance();
+        private static readonly ConnectionWrapper _connection = ConnectionWrapper.getInstance();
 
         // Get all reports
-        public List<Report> GetAllReports()
+        public static List<Report> GetAllReports()
         {
             const string query = "SELECT * FROM Reports";
             return GetReports(query);
         }
 
         // Get reports by target ID via ReportTargets table
-        public List<Report> GetReportsByTargetId(int targetId)
+        public static List<Report> GetReportsByTargetId(int targetId)
         {
             const string query = @"
                 SELECT r.* 
@@ -35,7 +34,7 @@ namespace Malshinon.DAL
         }
 
         // Get reports by tag string (using the Tag column in Reports table)
-        public List<Report> GetReportsByTag(string tag)
+        public static List<Report> GetReportsByTag(string tag)
         {
             const string query = @"SELECT * FROM Reports WHERE Tag = @tag";
 
@@ -48,7 +47,7 @@ namespace Malshinon.DAL
         }
 
         // Get reports by reporter ID
-        public List<Report> GetReportsByReporterId(int reporterId)
+        public static List<Report> GetReportsByReporterId(int reporterId)
         {
             const string query = @"SELECT * FROM Reports WHERE ReporterId = @reporterId";
 
@@ -61,7 +60,7 @@ namespace Malshinon.DAL
         }
 
         // Get total reports by Target ID via ReportTargets
-        public int GetReportCountByTargetId(int targetId)
+        public static int GetReportCountByTargetId(int targetId)
         {
             const string query = @"
                 SELECT COUNT(*) 
@@ -77,7 +76,7 @@ namespace Malshinon.DAL
         }
 
         // Get total reports by Reporter ID
-        public int GetReportCountByReporterId(int reporterId)
+        public static int GetReportCountByReporterId(int reporterId)
         {
             const string query = "SELECT COUNT(*) FROM Reports WHERE ReporterId = @reporterId";
 
@@ -89,7 +88,7 @@ namespace Malshinon.DAL
         }
 
         // Add a new report
-        public bool AddReport(Report report)
+        public static bool AddReport(Report report)
         {
             const string query = @"
                 INSERT INTO Reports (ReporterId, Message, Timestamp, Tag)
@@ -116,7 +115,7 @@ namespace Malshinon.DAL
         }
 
         // Helper method to map reader to Report objects
-        private List<Report> GetReports(string query, Dictionary<string, object>? parameters = null)
+        private static List<Report> GetReports(string query, Dictionary<string, object>? parameters = null)
         {
             var reportList = new List<Report>();
 
@@ -141,7 +140,7 @@ namespace Malshinon.DAL
         }
 
         // Helper method to get count from any query that returns COUNT(*)
-        private int GetReportsAmount(string query, Dictionary<string, object>? parameters = null)
+        private static int GetReportsAmount(string query, Dictionary<string, object>? parameters = null)
         {
             try
             {

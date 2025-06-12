@@ -1,10 +1,4 @@
-﻿using Malshinon.DAL.DB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// Runner.cs
 namespace Malshinon.UI
 {
     internal static class Runner
@@ -26,7 +20,7 @@ namespace Malshinon.UI
                     Console.WriteLine("Invalid selection. Press Enter to continue.");
                     break;
             }
-
         }
     }
 }
+

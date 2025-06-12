@@ -1,5 +1,4 @@
-﻿using Malshinon.Helpers;
-using Malshinon.models;
+﻿using Malshinon.models;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
