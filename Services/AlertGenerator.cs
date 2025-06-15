@@ -12,7 +12,7 @@ namespace Malshinon.Services
             DateTime now = DateTime.Now;
 
             // תנאי 1: 20 דוחות או יותר
-            if (target.IsDangerous())
+            if (Target.IsDangerous(targetId))
             {
                 return new Alert
                 {

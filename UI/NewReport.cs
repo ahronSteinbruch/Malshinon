@@ -24,7 +24,7 @@ namespace Malshinon.UI
             Console.WriteLine("Enter the namse of targets");
             string names = Console.ReadLine();
 
-            foreach(string name in names.Split(" "){
+            foreach(string name in names.Split(" ")){
                 targetsID.Add(PersonRegistry.GetOrCreateTarget(name));
             }
 

@@ -8,7 +8,7 @@ namespace Malshinon.DAL
     {
         private readonly string ConnectionStr = "server=localhost;" +
             "user=root;" +
-            "database=malshinon;" +
+            "database=Malshinon;" +
             "port=3306;";
 
         private static ConnectionWrapper Instance;
@@ -43,12 +43,7 @@ namespace Malshinon.DAL
                 Logger.Log(ex.Message,Logger.LogLevel.Error);
                 return null;
             }
-            finally
-            {
-                if (conn != null)
-                    conn.Close();
-                
-            }
+
         }
 
         public void ExecuteNoneQuery(string query, Dictionary<string, object> parameters = null)
@@ -74,13 +69,13 @@ namespace Malshinon.DAL
             {
                 Logger.Log(ex.Message, Logger.LogLevel.Error);
             }
-            finally
+/*            finally
             {
                 if(cmd != null)
                     cmd.Dispose();
                 if(connection != null)
                     connection.Close();
-            }
+            }*/
         }
 
         public object? ExecuteScalar(string query, Dictionary<string, object> parameters = null)
@@ -105,11 +100,11 @@ namespace Malshinon.DAL
                 Logger.Log(ex.Message, Logger.LogLevel.Error);
                 return null;
             }
-            finally
+/*            finally
             {
                 if (conn != null)
                     conn.Close();
-            }
+            }*/
         }
     }
 }

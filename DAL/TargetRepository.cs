@@ -87,7 +87,7 @@ namespace Malshinon.DAL
             {
                 if (reader != null && reader.Read())
                 {
-                    return Convert.ToInt32(reader[0]);
+                    return reader[0] != DBNull.Value ? Convert.ToInt32(reader[0]) : 0;
                 }
             }
             return 0;
@@ -95,7 +95,7 @@ namespace Malshinon.DAL
 
         public static int GetIdByNameOrBySecretCode(string name)
         {
-            const string query = "SELECT * FROM Tatgets WHERE Name = @name Or SecretCode = @name";
+            const string query = "SELECT * FROM Targets WHERE Name = @name Or SecretCode = @name";
             var parameters = new Dictionary<string, object> { { "@name", name } };
             using var reader = _connection.ExecuteSelect(query, parameters);
 

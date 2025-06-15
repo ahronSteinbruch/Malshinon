@@ -110,28 +110,28 @@ namespace Malshinon.DAL
         //return the highest id
         public static int getHighestId()
         {
-            const string query = "SELECT MAX(id) FROM Reports";
-            using (var reader = _connection.ExecuteSelect(query))
+            const string query = "SELECT MAX(Id) FROM Reporters";
+            using var reader = _connection.ExecuteSelect(query);
+
+            if (reader != null && reader.Read())
             {
-                if (reader != null && reader.Read())
-                {
-                    return Convert.ToInt32(reader[0]);
-                }
+                return reader[0] != DBNull.Value ? Convert.ToInt32(reader[0]) : 0;
             }
+
             return 0;
         }
+
 
         public static bool AddReporter(Reporter reporter)
         {
             const string query = @"
-                INSERT INTO Reporters (Id,Name, SecretCode,Rating,IsRecruit)
-                VALUES (@Id, @Name, @SecretCode, @Rating, @IsRecruit);";
+                INSERT INTO Reporters (Name, SecretCode,Rating,IsRecruit)
+                VALUES ( @Name, @SecretCode, @Rating, @IsRecruit);";
 
             var parameters = new Dictionary<string, object>
             {
-                { "@Id", reporter.Id },
                 { "@Name", reporter.Name },
-                { "@timestamp", reporter.SecretCode },
+                { "@SecretCode", reporter.SecretCode },
                 { "@Rating", reporter.Rating },
                 { "@IsRecruit", reporter.IsRecruit }
             };
